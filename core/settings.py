@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 import os
 import environ
@@ -157,12 +158,48 @@ REST_FRAMEWORK = {
 
 #Podamos hacer login correctamente
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.google.Google0Auth2',
-    'social_core.backends.facebook.Facebook0Auth2',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
-#                                          
-EMAIL_BACKEND='django.core.mail.backends.console.EmailBackEnd'
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT', ),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10080),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_TOKEN_CLASSES': (
+        'rest_framework_simplejwt.tokens.AccesToken',
+    )
+}
+
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'SEND_CONFIRMATION_EMAIL': True,
+    'SET_USERNAME_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'USERNAME_RESET_CONFIRM_URL': 'email/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SOCIAL_AUTH_TOKEN_STRATEGY': 'djoser.social.token.jwt.TokenStrategy',
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': ['http://localhost:8000/google', 'http://localhost:8000/facebook'],
+    'SERIALIZERS': {
+        'user_create': 'apps.user.serializers.UserCreateSerializer',
+        'user': 'apps.user.serializers.UserCreateSerializer',
+        'current_user': 'apps.user.serializers.UserCreateSerializer',
+        'user_delete': 'djoser.serializers.UserDeleteSerializer',
+    },
+}
+
+AUTH_USER_MODEL = "user.UserAccount"
+
+EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
 
 if not DEBUG:
     DEFAULT_FROM_EMAIL = 'Megasport- Tienda Deportiva <megasport@gmail.com'
