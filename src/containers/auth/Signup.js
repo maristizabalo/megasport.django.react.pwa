@@ -48,7 +48,7 @@ function Signup({
             src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
             alt="Workflow"
           />
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Register</h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Registrar</h2>
           
         </div>
 
@@ -57,7 +57,7 @@ function Signup({
             <form onSubmit={e=>onSubmit(e)} className="space-y-6">
               <div>
                 <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
-                  First Name
+                  Nombre
                 </label>
                 <div className="mt-1">
                   <input
@@ -72,7 +72,7 @@ function Signup({
               </div>
               <div>
                 <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
-                  Last Name
+                  Apellido
                 </label>
                 <div className="mt-1">
                   <input
@@ -88,7 +88,7 @@ function Signup({
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email address
+                  Correo Electronico
                 </label>
                 <div className="mt-1">
                   <input
@@ -104,7 +104,7 @@ function Signup({
 
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Password
+                  Contraseña
                 </label>
                 <div className="mt-1">
                   <input
@@ -120,7 +120,7 @@ function Signup({
               
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Repeat Password
+                  Repetir contraseña
                 </label>
                 <div className="mt-1">
                   <input
@@ -140,7 +140,7 @@ function Signup({
                   type="submit"
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                  Register
+                  Registrar
                 </button>
               </div>
             </form>
