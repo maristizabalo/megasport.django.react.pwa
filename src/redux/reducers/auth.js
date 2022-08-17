@@ -78,9 +78,11 @@ export default function Auth(state = initialState, action) {
             }
         case REFRESH_SUCCESS:
             localStorage.setItem('access', payload.access)
+            localStorage.setItem('refresh', payload.refresh)
             return {
                 ...state,
-                access: localStorage.getItem('access')
+                access: localStorage.getItem('access'),
+                refresh: localStorage.getItem('refresh')
             }
             
         case SIGNUP_SUCCESS:

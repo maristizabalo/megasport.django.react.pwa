@@ -2,6 +2,7 @@ import { Fragment } from 'react'
 import { Popover, Transition } from '@headlessui/react'
 import { Link } from 'react-router-dom'
 import Alert from '../Alert'
+import { connect } from 'react-redux'
 import {
   BookmarkAltIcon,
   BriefcaseIcon,
@@ -85,7 +86,10 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Navbar() {
+function Navbar({
+  isAuthenticated,
+  user,
+}) {
   return (
     <>
       <Popover className="relative bg-white">
@@ -413,3 +417,10 @@ export default function Navbar() {
     </>
   )
 }
+
+const mapStateToProps = state => ({
+  isAuthenticated: state.Auth.isAuthenticated,
+  user: state.Auth.user
+})
+
+export default connect(mapStateToProps,{}) (Navbar)

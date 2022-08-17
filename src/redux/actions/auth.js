@@ -21,8 +21,8 @@ export const check_authenticated = () => async dispatch => {
     if(localStorage.getItem('access')){
         const config = {
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Accept':'application/json',
+                'Content-Type':'application/json'
             }
         }
 
@@ -241,6 +241,7 @@ export const refresh = () => async dispatch => {
             const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/jwt/refresh/`, body, config);
             
             if (res.status === 200) {
+                console.log('Funciono perfecto')
                 dispatch({
                     type: REFRESH_SUCCESS,
                     payload: res.data
