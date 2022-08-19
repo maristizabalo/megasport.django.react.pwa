@@ -12,7 +12,12 @@ import {
     AUTHENTICATED_SUCCESS,
     AUTHENTICATED_FAIL,
     REFRESH_SUCCESS,
-    REFRESH_FAIL
+    REFRESH_FAIL,
+    LOGOUT,
+    RESET_PASSWORD_SUCCESS,
+    RESET_PASSWORD_FAIL,
+    RESET_PASSWORD_CONFIRM_SUCCESS,
+    RESET_PASSWORD_CONFIRM_FAIL
 } from './types'
 import {setAlert} from './alert'
 import axios from 'axios'
@@ -265,3 +270,113 @@ export const refresh = () => async dispatch => {
         });
     }
 };
+
+export const reset_password = (email) => async dispatch => {
+    dispatch({
+        type: SET_AUTH_LOADING
+    })
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+
+    const body = JSON.stringify({email})
+
+    try {
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/users/reset_password/`, body, config)
+
+        if ( res.status === 204){
+            dispatch({
+                type: RESET_PASSWORD_SUCCESS
+            })
+            dispatch({
+                type: REMOVE_AUTH_LOADING
+            })
+            dispatch(setAlert('El correo para restablecer la contraseña ya fue enviado, revise su bandeja de entrada', 'green'))
+        } else {
+            dispatch({
+                type: RESET_PASSWORD_FAIL
+            })
+            dispatch({
+                type: REMOVE_AUTH_LOADING
+            })
+            dispatch(setAlert('Error enviando correo para restablecer contraseña', 'red'))
+        }
+    } catch (error) {
+        dispatch({
+            type: RESET_PASSWORD_FAIL
+        })
+        dispatch({
+            type: REMOVE_AUTH_LOADING
+        })
+        dispatch(setAlert('Error enviando correo para restablecer contraseña', 'red'))
+    }
+}
+
+export const reset_password_confirm = (uid, token, new_password, re_new_password) => async dispatch => {
+    dispatch({
+        type: SET_AUTH_LOADING
+    })
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+
+    const body = JSON.stringify({
+        uid,
+        token,
+        new_password,
+        re_new_password
+    })
+
+    if(new_password !== re_new_password){
+        dispatch({
+            type: RESET_PASSWORD_CONFIRM_FAIL
+        })
+        dispatch({
+            type: REMOVE_AUTH_LOADING
+        })
+        dispatch(setAlert('Las contraseñas no coinciden', 'red'))
+    } else {
+        try {
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/users/reset_password_confirm/`, body, config)
+
+            if(res.status === 204){
+                dispatch({
+                    type: RESET_PASSWORD_CONFIRM_SUCCESS
+                })
+                dispatch({
+                    type: REMOVE_AUTH_LOADING
+                })
+                dispatch(setAlert('Su contraseña fue restablecida correctamente', 'success'))
+            } else {
+                dispatch({
+                    type: RESET_PASSWORD_CONFIRM_FAIL
+                })
+                dispatch({
+                    type: REMOVE_AUTH_LOADING
+                })
+                dispatch(setAlert('Error al cambiar la contraseña', 'danger'))
+            }
+        } catch (error) {
+            dispatch({
+                type: RESET_PASSWORD_CONFIRM_FAIL
+            })
+            dispatch({
+                type: REMOVE_AUTH_LOADING
+            })
+            dispatch(setAlert('Error al cambiar la contraseña', 'danger'))
+        }
+    }
+}
+
+export const logout = () => async dispatch => {
+    dispatch({
+        type: LOGOUT
+    })
+    dispatch(setAlert('Cerraste sesion', 'green'))
+}

@@ -12,7 +12,13 @@ import {
     AUTHENTICATED_SUCCESS,
     AUTHENTICATED_FAIL,
     REFRESH_SUCCESS,
-    REFRESH_FAIL
+    REFRESH_FAIL,
+    LOGOUT,
+    RESET_PASSWORD_SUCCESS,
+    RESET_PASSWORD_FAIL,
+    RESET_PASSWORD_CONFIRM_SUCCESS,
+    RESET_PASSWORD_CONFIRM_FAIL
+
 } from '../actions/types'
 
 const initialState = {
@@ -73,6 +79,10 @@ export default function Auth(state = initialState, action) {
             }
         case ACTIVATION_SUCCESS:
         case ACTIVATION_FAIL:
+        case RESET_PASSWORD_SUCCESS:
+        case RESET_PASSWORD_FAIL:
+        case RESET_PASSWORD_CONFIRM_SUCCESS:
+        case RESET_PASSWORD_CONFIRM_FAIL:
             return {
                 ...state
             }
@@ -89,6 +99,7 @@ export default function Auth(state = initialState, action) {
         case SIGNUP_FAIL:
         case LOGIN_FAIL:
         case REFRESH_FAIL:
+        case LOGOUT:
             localStorage.removeItem('access')
             localStorage.removeItem('refresh')
             return {
@@ -98,7 +109,8 @@ export default function Auth(state = initialState, action) {
                 isAuthenticated: false,
                 user:null,
             }
-        
+
+            
         default:
             return state
     }
