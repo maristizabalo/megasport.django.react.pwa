@@ -25,6 +25,7 @@ class ListCategoriesView(APIView):
                             sub_item['id'] = cat.id
                             sub_item['name'] = cat.name
                             sub_item['sub_categories'] = []
+                            item['sub_categories'].append(sub_item)
                     result.append(item)
             return Response({'categories': result}, status=status.HTTP_200_OK)
         else:
