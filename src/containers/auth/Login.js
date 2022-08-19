@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import { login } from '../../redux/actions/auth'
 import { Rings } from 'react-loader-spinner'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 
 function Login({
   login,
@@ -25,11 +25,18 @@ function Login({
     password
   } = formData;
 
+  const [requestSent, setRequestSent] = useState(false)
+
   const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const onSubmit = e => {
     e.preventDefault();
     login(email, password);
+    setRequestSent(true)
+  }
+
+  if(requestSent && !loading){
+    return <Navigate to="/" />
   }
 
   return (
