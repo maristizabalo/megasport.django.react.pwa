@@ -29,20 +29,20 @@ import { Navigate } from 'react-router-dom'
 
 const solutions = [
   {
-    name: 'Analytics',
+    name: 'Uniformes',
     description: 'Get a better understanding of where your traffic is coming from.',
     href: '#',
     icon: ChartBarIcon,
   },
   {
-    name: 'Engagement',
+    name: 'Sudaderas',
     description: 'Speak directly to your customers in a more meaningful way.',
     href: '#',
     icon: CursorClickIcon,
   },
-  { name: 'Security', description: "Your customers' data will be safe and secure.", href: '#', icon: ShieldCheckIcon },
+  { name: 'Busos', description: "Your customers' data will be safe and secure.", href: '#', icon: ShieldCheckIcon },
   {
-    name: 'Integrations',
+    name: 'Gorras',
     description: "Connect with third-party tools that you're already using.",
     href: '#',
     icon: ViewGridIcon,
@@ -223,6 +223,9 @@ function Navbar({
             </div>
             <div className="hidden md:flex-1 md:flex md:items-center md:justify-between">
               <Popover.Group as="nav" className="flex space-x-10">
+                <Link to="/shop" className="text-base font-medium text-gray-500 hover:text-gray-900">
+                  Tienda
+                </Link>
                 <Popover>
                   {({ open }) => (
                     <>
@@ -232,7 +235,7 @@ function Navbar({
                           'group bg-white rounded-md inline-flex items-center text-base font-medium hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
                         )}
                       >
-                        <span>Solutions</span>
+                        <span>Categorias</span>
                         <ChevronDownIcon
                           className={classNames(
                             open ? 'text-gray-600' : 'text-gray-400',
@@ -298,9 +301,6 @@ function Navbar({
                     </>
                   )}
                 </Popover>
-                <a href="#" className="text-base font-medium text-gray-500 hover:text-gray-900">
-                  Pricing
-                </a>
                 <a href="#" className="text-base font-medium text-gray-500 hover:text-gray-900">
                   Docs
                 </a>

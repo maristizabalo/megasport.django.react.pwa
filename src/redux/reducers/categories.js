@@ -1,4 +1,4 @@
-import { GET_CATEGORIES_FAIL, GET_CATEGORIES_SUCCESS } from "./types";
+import { GET_CATEGORIES_FAIL, GET_CATEGORIES_SUCCESS } from "../actions/types";
 
 const initialState = {
     categories: null
@@ -12,7 +12,7 @@ export default function Categories(state= initialState, action){
         case GET_CATEGORIES_SUCCESS:
             return {
                 ...state,
-                categories: payload.categories
+                categories: payload
             }
         case GET_CATEGORIES_FAIL:
             return {

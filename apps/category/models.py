@@ -4,8 +4,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Categoria'
         verbose_name_plural = 'Categorias'
-    
-    parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
+
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):

@@ -9,7 +9,6 @@ import Footer from '../components/navigation/Footer';
 const Layout = (props) => {
     
     useEffect(() => {
-        console.log('Ejecutando el useEffect')
         props.refresh()
         props.check_authenticated()
         props.load_user()

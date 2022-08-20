@@ -246,13 +246,11 @@ export const refresh = () => async dispatch => {
             const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/jwt/refresh/`, body, config);
             
             if (res.status === 200) {
-                console.log('Funciono perfecto')
                 dispatch({
                     type: REFRESH_SUCCESS,
                     payload: res.data
                 })
             } else {
-                console.log('Primer else fallo')
                 dispatch({
                     type: REFRESH_FAIL
                 })
@@ -264,7 +262,6 @@ export const refresh = () => async dispatch => {
             })
         }
     } else {
-        console.log('No existe refresh')
         dispatch({
             type: REFRESH_FAIL
         });

@@ -35,7 +35,6 @@ function ResetPassword({
 
   if(requestSent && !loading)
     return <Navigate to="/" />
-
     
   return (
     <Layout>
