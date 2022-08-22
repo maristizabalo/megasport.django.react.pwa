@@ -147,17 +147,17 @@ class ListBySearchView(APIView):
             return Response({'error': 'El id de la categoria debe ser un entero'}, status=status.HTTP_404_NOT_FOUND)
 
         price_range = data['price_range']
-        sort_by = data ['sort_by']
+        sort_by = data['sort_by']
 
-        if not (sortBy == 'date_created' or sortBy == 'price' or sortBy == 'name'):
-            sortBy = 'date_created'
+        if not (sort_by == 'date_created' or sort_by == 'price' or sort_by == 'name'):
+            sort_by = 'date_created'
         
         order = data['order']
 
         #Si los categoriy.id es iguala  0 filtrar a todas las cotegorias
         if category_id == 0:
             product_results = Product.objects.all()
-        elif not Category.objects.filter(id=category_id).exist():
+        elif not Category.objects.filter(id=category_id).exists():
             return Response({'error': 'Esta categoria no existe'}, status=status.HTTP_404_NOT_FOUND)
         else:
             category = Category.objects.get(id=category_id)
@@ -171,8 +171,8 @@ class ListBySearchView(APIView):
             product_results = product_results.filter(price__gte=50000)
             product_results = product_results.filter(price__lt=80000)
         elif price_range == '80000 - 150000':
-            product_results = product_results.filter(price__gte=50000)
-            product_results = product_results.filter(price__lt=80000)
+            product_results = product_results.filter(price__gte=80000)
+            product_results = product_results.filter(price__lt=150000)
         elif price_range == 'Mas de 150000':
             product_results = product_results.filter(price__gte=150000)
 
