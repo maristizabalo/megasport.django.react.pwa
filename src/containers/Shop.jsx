@@ -6,6 +6,10 @@ import { XIcon } from '@heroicons/react/outline'
 import { ChevronDownIcon, FilterIcon, MinusSmIcon, PlusSmIcon, ViewGridIcon } from '@heroicons/react/solid'
 import { connect } from 'react-redux'
 import { get_categories } from '../redux/actions/categories'
+import { get_products, get_filtered_products } from '../redux/actions/products'
+import { Link } from 'react-router-dom'
+import ProductCard from '../components/product/ProductCard'
+import { prices } from '../helpers/fixedPrices'
 
 const sortOptions = [
     { name: 'Most Popular', href: '#', current: true },
@@ -13,13 +17,6 @@ const sortOptions = [
     { name: 'Newest', href: '#', current: false },
     { name: 'Price: Low to High', href: '#', current: false },
     { name: 'Price: High to Low', href: '#', current: false },
-]
-const subCategories = [
-    { name: 'Totes', href: '#' },
-    { name: 'Backpacks', href: '#' },
-    { name: 'Travel Bags', href: '#' },
-    { name: 'Hip Bags', href: '#' },
-    { name: 'Laptop Sleeves', href: '#' },
 ]
 const filters = [
     {
@@ -65,14 +62,78 @@ function classNames(...classes) {
 
 const Shop = ({
     get_categories,
-    categories
+    categories,
+    get_products,
+    products,
+    get_filtered_products,
+    filtered_products
 }) => {
 
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+    const [filtered, setFiltered] = useState(false)
+    const [formData, setFormData] = useState({
+        category_id: '0',
+        price_range: 'Any',
+        sort_by: 'created',
+        order: 'desc'
+    })
+
+    const {
+        category_id,
+        price_range,
+        sort_by,
+        order
+    } = formData
 
     useEffect(() => {
         get_categories()
+        get_products()
+        window.scrollTo(0, 0)
     }, [])
+
+    const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value })
+    const onSubmit = e => {
+        e.preventDefault()
+        get_filtered_products(category_id, price_range, sort_by, order)
+        console.log(category_id, price_range, sort_by, order)
+        setFiltered(true)
+    }
+
+    const showProducts = () => {
+        let results = []
+        let display = []
+
+        if (filtered_products && filtered_products !== null && filtered_products !== undefined && filtered) {
+            filtered_products.map((product, index) => {
+                return display.push(
+                    <div key={index}>
+                        <ProductCard product={product} />
+                    </div>
+                )
+            })
+        } else if (!filtered && products && products !== null && products !== undefined) {
+            products.map((product, index) => {
+                return display.push(
+                    <div key={index}>
+                        <ProductCard product={product} />
+                    </div>
+                )
+            })
+        }
+
+        for (let i = 0; i < display.length; i += 3) {
+            results.push(
+                <div key={i} className="grid md:grid-cols-3">
+                    {display[i] ? display[i] : <div className=''></div>}
+                    {display[i + 1] ? display[i + 1] : <div className=''></div>}
+                    {display[i + 2] ? display[i + 2] : <div className=''></div>}
+                </div>
+            )
+        }
+
+        return results
+    }
+
     return (
         <Layout>
             <div>
@@ -114,7 +175,7 @@ const Shop = ({
                                 </div>
 
                                 {/* Mobile Filters */}
-                                <form className="mt-4 border-t border-gray-200">
+                                <form onSubmit={e => onSubmit(e)} className="mt-4 border-t border-gray-200">
                                     <h3 className="sr-only">Categories</h3>
                                     <ul role="list" className="font-medium text-gray-900 px-2 py-3">
                                         {
@@ -123,69 +184,145 @@ const Shop = ({
                                             categories !== undefined &&
                                             categories.map(category => {
 
-                                                    let result = []
-                                                    result.push(
-                                                        <div key={category.id} className="flex items-center h-5 my-5">
-                                                            <input
-                                                                name='category_id'
-                                                                type="radio"
-                                                                className='focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded-full'
-                                                            />
-                                                            <label htmlFor="" className='ml-3 min-w-0 flex-1 text-gray-500'>
-                                                                {category.name}
-                                                            </label>
-                                                        </div>
-                                                    )
+                                                let result = []
+                                                result.push(
+                                                    <div key={category.id} className="flex items-center h-5 my-5">
+                                                        <input
+                                                            name='category_id'
+                                                            onChange={e => onChange(e)}
+                                                            value={category.id.toString()}
+                                                            type="radio"
+                                                            className='focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded-full'
+                                                        />
+                                                        <label htmlFor="" className='ml-3 min-w-0 flex-1 text-gray-500'>
+                                                            {category.name}
+                                                        </label>
+                                                    </div>
+                                                )
 
-                                                    return result
+                                                return result
 
-                                                
+
                                             })
                                         }
                                     </ul>
 
-                                    {filters.map((section) => (
-                                        <Disclosure as="div" key={section.id} className="border-t border-gray-200 px-4 py-6">
-                                            {({ open }) => (
-                                                <>
-                                                    <h3 className="-mx-2 -my-3 flow-root">
-                                                        <Disclosure.Button className="px-2 py-3 bg-white w-full flex items-center justify-between text-gray-400 hover:text-gray-500">
-                                                            <span className="font-medium text-gray-900">{section.name}</span>
-                                                            <span className="ml-6 flex items-center">
-                                                                {open ? (
-                                                                    <MinusSmIcon className="h-5 w-5" aria-hidden="true" />
-                                                                ) : (
-                                                                    <PlusSmIcon className="h-5 w-5" aria-hidden="true" />
-                                                                )}
-                                                            </span>
-                                                        </Disclosure.Button>
-                                                    </h3>
-                                                    <Disclosure.Panel className="pt-6">
-                                                        <div className="space-y-6">
-                                                            {section.options.map((option, optionIdx) => (
-                                                                <div key={option.value} className="flex items-center">
-                                                                    <input
-                                                                        id={`filter-mobile-${section.id}-${optionIdx}`}
-                                                                        name={`${section.id}[]`}
-                                                                        defaultValue={option.value}
-                                                                        type="checkbox"
-                                                                        defaultChecked={option.checked}
-                                                                        className="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
-                                                                    />
-                                                                    <label
-                                                                        htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
-                                                                        className="ml-3 min-w-0 flex-1 text-gray-500"
-                                                                    >
-                                                                        {option.label}
-                                                                    </label>
-                                                                </div>
-                                                            ))}
+                                    <Disclosure as="div" className="border-t border-gray-200 px-4 py-6">
+                                        {({ open }) => (
+                                            <>
+                                                <h3 className='-mx-2 -my-3 flow-root'>
+                                                    <Disclosure.Button className="px-2 py-3 bg-white w-full flex items-center justify-between text-gray-400 hover:text-gray-500" >
+                                                        <span className='font-sofiapro-regular text-gray-900'>Precios</span>
+                                                        <span className='ml-6 flex items-center'>
+                                                            {open ? (
+                                                                <MinusSmIcon className='h-5 w-5' aria-hidden="true" />
+                                                            ) : (
+                                                                <PlusSmIcon className='h-5 w-5' aria-hidden="true" />
+                                                            )}
+                                                        </span>
+                                                    </Disclosure.Button>
+
+                                                    <Disclosure.Panel className="pt-6" >
+                                                        <div className='space-y-6'>
+                                                            {
+                                                                prices && prices.map((price, index) => {
+                                                                    if (price.id === 0) {
+                                                                        return (
+                                                                            <div key={index} className="form-check">
+                                                                                <input
+                                                                                    name="price_range"
+                                                                                    onChange={e => onChange(e)}
+                                                                                    value={price.name}
+                                                                                    type="radio"
+                                                                                    className='focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded-full'
+                                                                                    defaultChecked
+                                                                                />
+                                                                                <label className="ml-3 min-w-0 flex-1 text-gray-500 font-sofiapro-light" >{price.name}</label>
+                                                                            </div>
+                                                                        )
+                                                                    } else {
+                                                                        return (
+                                                                            <div key={index} className="form-check">
+                                                                                <input
+                                                                                    onChange={e => onChange(e)}
+                                                                                    value={price.name}
+                                                                                    name="price_range"
+                                                                                    type="radio"
+                                                                                    className='focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded-full'
+                                                                                />
+                                                                                <label className="ml-3 min-w-0 flex-1 text-gray-500 font-sofiapro-light" >{price.name}</label>
+                                                                            </div>
+                                                                        )
+
+                                                                    }
+                                                                })
+                                                            }
                                                         </div>
                                                     </Disclosure.Panel>
-                                                </>
-                                            )}
-                                        </Disclosure>
-                                    ))}
+                                                </h3>
+                                            </>
+                                        )}
+                                    </Disclosure>
+                                    <Disclosure as="div" className="border-t border-gray-200 px-4 py-6">
+                                        {({ open }) => (
+                                            <>
+                                                <h3 className="-mx-2 -my-3 flow-root">
+                                                    <Disclosure.Button className="px-2 py-3 bg-white w-full flex items-center justify-between text-gray-400 hover:text-gray-500">
+                                                        <span className="font-sofiapro-regular text-gray-900">Mas Filtros</span>
+                                                        <span className="ml-6 flex items-center">
+                                                            {open ? (
+                                                                <MinusSmIcon className="h-5 w-5" aria-hidden="true" />
+                                                            ) : (
+                                                                <PlusSmIcon className="h-5 w-5" aria-hidden="true" />
+                                                            )}
+                                                        </span>
+                                                    </Disclosure.Button>
+                                                    <Disclosure.Panel className="pt-6">
+                                                        <div className="space-y-6">
+                                                            <div className='form-group '>
+                                                                <label htmlFor='sort_by' className='mr-3 min-w-0 flex-1 text-gray-500'
+                                                                >Ver por</label>
+                                                                <select
+                                                                    className='my-2 font-sofiapro-light inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500'
+                                                                    id='sort_by'
+                                                                    name='sort_by'
+                                                                    onChange={e => onChange(e)}
+                                                                    value={sort_by}
+                                                                >
+                                                                    <option value='date_created'>Fecha</option>
+                                                                    <option value='price'>Precio</option>
+                                                                    <option value='sold'>Mas vendido</option>
+                                                                    <option value='name'>Nombre</option>
+
+                                                                </select>
+                                                            </div>
+                                                            <div className='form-group'>
+                                                                <label htmlFor='order' className='mr-3 min-w-0 flex-1 text-gray-500'
+                                                                >Orden</label>
+                                                                <select
+                                                                    className='my-2 font-sofiapro-light inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500'
+                                                                    id='order'
+                                                                    name='order'
+                                                                    onChange={e => onChange(e)}
+                                                                    value={order}
+                                                                >
+                                                                    <option value='asc'>A - Z</option>
+                                                                    <option value='desc'>Z - A</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </Disclosure.Panel>
+                                                </h3>
+                                            </>
+                                        )}
+                                    </Disclosure>
+
+                                    <button
+                                        type="submit"
+                                        className="float-right inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                    >
+                                        Buscar
+                                    </button>
                                 </form>
                             </div>
                         </Transition.Child>
@@ -285,7 +422,7 @@ const Shop = ({
                                             )
 
                                             return result
-                                                
+
                                         })
                                     }
                                 </ul>
@@ -336,9 +473,7 @@ const Shop = ({
 
                             {/* Product grid */}
                             <div className="lg:col-span-3">
-                                {/* Replace with your content */}
-                                <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 lg:h-full" />
-                                {/* /End replace */}
+                                {products && showProducts()}
                             </div>
                         </div>
                     </section>
@@ -349,8 +484,10 @@ const Shop = ({
 }
 
 const mapStateToProps = state => ({
-    categories: state.Categories.categories
+    categories: state.Categories.categories,
+    products: state.Products.products,
+    filtered_products: state.Products.filtered_products
 })
 export default connect(mapStateToProps, {
-    get_categories,
+    get_categories, get_products, get_filtered_products
 })(Shop)

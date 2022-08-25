@@ -154,7 +154,7 @@ class ListBySearchView(APIView):
         
         order = data['order']
 
-        #Si los categoriy.id es iguala  0 filtrar a todas las cotegorias
+        #Si los categoriy.id es igual a 0 filtrar a todas las cotegorias
         if category_id == 0:
             product_results = Product.objects.all()
         elif not Category.objects.filter(id=category_id).exists():
@@ -162,6 +162,7 @@ class ListBySearchView(APIView):
         else:
             category = Category.objects.get(id=category_id)
             product_results = Product.objects.filter(category=category)
+            
         
         #Filtrar por precio
         if price_range == '20000 - 49000':
@@ -188,7 +189,7 @@ class ListBySearchView(APIView):
         product_results = ProductSerializer(product_results, many=True)
 
         if len(product_results.data) > 0:
-            return Response({'related_products': product_results.data}, status=status.HTTP_200_OK)
+            return Response({'filtered_products': product_results.data}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'No se encontraron productos'}, status=status.HTTP_404_NOT_FOUND)
 
